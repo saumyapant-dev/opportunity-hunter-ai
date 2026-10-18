@@ -1,0 +1,162 @@
+{
+  "name": "Opportunity Hunter - Manual Discovery",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "opportunity-research",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ],
+      "id": "node-webhook-trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 1: Validate input parameters\nconst body = $json.body || $json;\n\nif (!body.skills || !Array.isArray(body.skills) || body.skills.length === 0) {\n  throw new Error('Validation Error: At least one skill must be provided.');\n}\n\nreturn {\n  run_id: body.run_id || 'manual_' + Date.now(),\n  skills: body.skills,\n  opportunity_types: body.opportunity_types || ['internship', 'hackathon'],\n  location: body.location || 'Remote',\n  experience: body.experience || 'Beginner',\n  keywords: body.keywords || [],\n  preferred_domains: body.preferred_domains || [],\n  max_results: Math.min(Math.max(body.max_results || 10, 1), 50),\n  mode: body.mode || 'mock'\n};"
+      },
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        300
+      ],
+      "id": "node-validate-input"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/browser-use/execute",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"run_id\": \"{{ $json.run_id }}\",\n  \"skills\": {{ JSON.stringify($json.skills) }},\n  \"opportunity_types\": {{ JSON.stringify($json.opportunity_types) }},\n  \"location\": \"{{ $json.location }}\",\n  \"experience\": \"{{ $json.experience }}\",\n  \"keywords\": {{ JSON.stringify($json.keywords) }},\n  \"preferred_domains\": {{ JSON.stringify($json.preferred_domains) }},\n  \"max_results\": {{ $json.max_results }},\n  \"mode\": \"{{ $json.mode }}\"\n}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "name": "Execute Browser Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        300
+      ],
+      "id": "node-browser-agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 4 & 5: Validate returned JSON and filter batch duplicates\nconst data = $json;\nconst opportunities = data.opportunities || [];\nconst seenUrls = new Set();\nconst validatedOpps = [];\n\nfor (const opp of opportunities) {\n  if (!opp.title || !opp.organization || !opp.application_url) {\n    continue; // Skip malformed listings\n  }\n  \n  // Normalize URL to remove tracking fragments\n  let cleanUrl = opp.application_url.split('?')[0].toLowerCase().replace(/\\/+$/, '');\n  if (seenUrls.has(cleanUrl)) {\n    continue; // Skip duplicate in batch\n  }\n  seenUrls.add(cleanUrl);\n\n  validatedOpps.push({\n    ...opp,\n    deadline: opp.deadline || null,\n    remote: Boolean(opp.remote)\n  });\n}\n\nreturn {\n  run_id: data.run_id,\n  status: 'completed',\n  opportunities: validatedOpps,\n  count: validatedOpps.length\n};"
+      },
+      "name": "Validate & Deduplicate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        300
+      ],
+      "id": "node-deduplicate"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/webhooks/n8n/results",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"run_id\": \"{{ $json.run_id }}\",\n  \"status\": \"{{ $json.status }}\",\n  \"opportunities\": {{ JSON.stringify($json.opportunities) }}\n}",
+        "options": {}
+      },
+      "name": "Store in FastAPI Database",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        300
+      ],
+      "id": "node-store-db"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"run_id\": \"{{ $node['Validate & Deduplicate'].json.run_id }}\",\n  \"opportunities_discovered\": {{ $node['Validate & Deduplicate'].json.count }},\n  \"db_result\": {{ JSON.stringify($json) }}\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        300
+      ],
+      "id": "node-respond-webhook"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Execute Browser Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Browser Agent": {
+      "main": [
+        [
+          {
+            "node": "Validate & Deduplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Deduplicate": {
+      "main": [
+        [
+          {
+            "node": "Store in FastAPI Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in FastAPI Database": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

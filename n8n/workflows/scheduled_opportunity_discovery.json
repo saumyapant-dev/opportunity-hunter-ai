@@ -1,0 +1,197 @@
+{
+  "name": "Opportunity Hunter - Scheduled Discovery",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger (Daily 8 AM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        300
+      ],
+      "id": "node-schedule-trigger"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://127.0.0.1:8000/api/preferences",
+        "options": {}
+      },
+      "name": "Fetch User Preferences",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        420,
+        300
+      ],
+      "id": "node-fetch-preferences"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/browser-use/execute",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"run_id\": \"scheduled_\" + Date.now(),\n  \"skills\": {{ JSON.stringify($json.skills) }},\n  \"opportunity_types\": {{ JSON.stringify($json.opportunity_types) }},\n  \"location\": \"{{ $json.location }}\",\n  \"experience\": \"{{ $json.experience }}\",\n  \"keywords\": {{ JSON.stringify($json.keywords) }},\n  \"preferred_domains\": {{ JSON.stringify($json.preferred_domains) }},\n  \"max_results\": {{ $json.max_results }},\n  \"mode\": \"{{ $json.llm_provider === 'mock' ? 'mock' : 'live' }}\"\n}",
+        "options": {
+          "timeout": 180000
+        }
+      },
+      "name": "Trigger Browser Use Agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        300
+      ],
+      "id": "node-trigger-agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/api/webhooks/n8n/results",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"run_id\": \"{{ $json.run_id }}\",\n  \"status\": \"completed\",\n  \"opportunities\": {{ JSON.stringify($json.opportunities) }}\n}",
+        "options": {}
+      },
+      "name": "Store New Opportunities",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        860,
+        300
+      ],
+      "id": "node-store-opportunities"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.new_saved }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "name": "Check If New Opportunities Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        300
+      ],
+      "id": "node-check-new"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5678/webhook/opportunity-notifications",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient_email\": \"{{ $('Fetch User Preferences').first().json.notification_email }}\",\n  \"new_count\": {{ $json.new_saved }},\n  \"opportunities\": {{ JSON.stringify($('Trigger Browser Use Agent').first().json.opportunities) }}\n}",
+        "options": {}
+      },
+      "name": "Trigger Notification Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1320,
+        240
+      ],
+      "id": "node-trigger-notifications"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  status: 'completed',\n  message: 'Scheduled run completed with 0 new opportunities. No notifications needed.',\n  timestamp: new Date().toISOString()\n};"
+      },
+      "name": "No New Listings Log",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        400
+      ],
+      "id": "node-no-new-log"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (Daily 8 AM)": {
+      "main": [
+        [
+          {
+            "node": "Fetch User Preferences",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch User Preferences": {
+      "main": [
+        [
+          {
+            "node": "Trigger Browser Use Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Browser Use Agent": {
+      "main": [
+        [
+          {
+            "node": "Store New Opportunities",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store New Opportunities": {
+      "main": [
+        [
+          {
+            "node": "Check If New Opportunities Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If New Opportunities Found": {
+      "main": [
+        [
+          {
+            "node": "Trigger Notification Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No New Listings Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

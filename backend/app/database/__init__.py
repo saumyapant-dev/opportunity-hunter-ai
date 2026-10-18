@@ -1,0 +1,36 @@
+"""Database package for Opportunity Hunter AI."""
+from .db import (
+    get_db_connection,
+    init_db,
+    save_opportunity,
+    get_opportunity,
+    list_opportunities,
+    update_opportunity,
+    delete_opportunity,
+    find_duplicate,
+    create_research_run,
+    update_research_run,
+    get_research_run,
+    get_latest_research_run,
+    get_preferences,
+    save_preferences,
+    get_dashboard_stats,
+)
+
+__all__ = [
+    "get_db_connection",
+    "init_db",
+    "save_opportunity",
+    "get_opportunity",
+    "list_opportunities",
+    "update_opportunity",
+    "delete_opportunity",
+    "find_duplicate",
+    "create_research_run",
+    "update_research_run",
+    "get_research_run",
+    "get_latest_research_run",
+    "get_preferences",
+    "save_preferences",
+    "get_dashboard_stats",
+]
