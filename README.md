@@ -14,6 +14,17 @@ Opportunity Hunter AI is a genuine browser automation and workflow orchestration
 
 ---
 
+## 🌐 Live Production Deployment
+
+- 🚀 **Live Public Web App**: **[https://opportunity-hunter-ai-8zhf.onrender.com](https://opportunity-hunter-ai-8zhf.onrender.com)**
+- 📂 **GitHub Repository**: **[https://github.com/saumyapant-dev/opportunity-hunter-ai](https://github.com/saumyapant-dev/opportunity-hunter-ai)**
+- ☁️ **Hosting Platform**: Render (Full-Stack Web Service)
+- 🟢 **Operational Status**: **Live in Production** (Accessible on any device without running localhost)
+- 📖 **Interactive Swagger API Docs**: **[https://opportunity-hunter-ai-8zhf.onrender.com/docs](https://opportunity-hunter-ai-8zhf.onrender.com/docs)**
+- 🩺 **API Health Check**: **[https://opportunity-hunter-ai-8zhf.onrender.com/health](https://opportunity-hunter-ai-8zhf.onrender.com/health)**
+
+---
+
 ## 🌟 Key Features
 
 - 🤖 **Browser Use Web AI Agent**: Navigates opportunity websites (Devpost, Y Combinator jobs, GitHub, etc.), identifies matching positions, extracts structured data, and enforces strict schema validation.
