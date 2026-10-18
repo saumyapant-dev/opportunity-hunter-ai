@@ -1,205 +1,89 @@
-# 🎯 Opportunity Hunter AI
+- Opportunity Hunter AI 
 
-> **An autonomous opportunity discovery agent that helps students find internships, hackathons, research opportunities, and entry-level jobs based on their skills, interests, and preferences.**
+An AI-powered tool that helps students discover internships, hackathons, research opportunities, and entry-level jobs based on their skills and interests.
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.142.2-009688?logo=fastapi)](https://fastapi.tiangolo.com)
-[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react)](https://react.dev)
-[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite)](https://vitejs.dev)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)](https://tailwindcss.com)
-[![Browser Use](https://img.shields.io/badge/Browser_Use-0.13.10-FF5722)](https://github.com/browser-use/browser-use)
-[![n8n](https://img.shields.io/badge/n8n-Orchestration-FF6D5A?logo=n8n)](https://n8n.io)
-[![Tests](https://img.shields.io/badge/Tests-13%20Passed-brightgreen)](backend/tests/)
+As a CSE student, I wanted to build something that could make finding opportunities a little easier. Instead of manually searching through different websites, the idea behind Opportunity Hunter AI is to automate the research process and bring relevant opportunities together in one place.
 
-Opportunity Hunter AI is a genuine browser automation and workflow orchestration system—not simply a text-only chatbot. It combines **Playwright-driven Browser Use Web AI**, **n8n workflow automation**, an asynchronous **FastAPI backend with SQLite persistence**, and a modern **React 18 SaaS dashboard**.
+The project combines browser automation, AI-powered research, workflow automation, and a web dashboard where users can explore and manage the opportunities they find.
 
----
+## Live Demo
 
-## 🌐 Live Production Deployment
+- Live Website:** https://opportunity-hunter-ai-8zhf.onrender.com
+- GitHub Repository:** https://github.com/saumyapant-dev/opportunity-hunter-ai
+- API Documentation:** https://opportunity-hunter-ai-8zhf.onrender.com/docs
+- API Health Check:** https://opportunity-hunter-ai-8zhf.onrender.com/health
 
-- 🚀 **Live Public Web App**: **[https://opportunity-hunter-ai-8zhf.onrender.com](https://opportunity-hunter-ai-8zhf.onrender.com)**
-- 📂 **GitHub Repository**: **[https://github.com/saumyapant-dev/opportunity-hunter-ai](https://github.com/saumyapant-dev/opportunity-hunter-ai)**
-- ☁️ **Hosting Platform**: Render (Full-Stack Web Service)
-- 🟢 **Operational Status**: **Live in Production** (Accessible on any device without running localhost)
-- 📖 **Interactive Swagger API Docs**: **[https://opportunity-hunter-ai-8zhf.onrender.com/docs](https://opportunity-hunter-ai-8zhf.onrender.com/docs)**
-- 🩺 **API Health Check**: **[https://opportunity-hunter-ai-8zhf.onrender.com/health](https://opportunity-hunter-ai-8zhf.onrender.com/health)**
+The application is deployed on Render, so you can explore the web app without running it on your local machine.
 
----
+## What Can It Do?
 
-## 🌟 Key Features
+Here are some of the main features I've worked on:
 
-- 🤖 **Browser Use Web AI Agent**: Navigates opportunity websites (Devpost, Y Combinator jobs, GitHub, etc.), identifies matching positions, extracts structured data, and enforces strict schema validation.
-- 🔄 **Dual Orchestration Pipeline**:
-  - **n8n Workflows**: Importable workflows for manual research webhooks, scheduled daily cron harvesting, and formatted HTML email digests.
-  - **Direct Background Runner**: Built-in Python `asyncio` runner allowing immediate local testing even without an active n8n instance.
-- ⚡ **URL Normalization & Smart Deduplication**: Normalizes tracking parameters (`utm_*`, `ref`, `fbclid`), detects duplicates via URL and fuzzy title/organization matching, and **preserves user application status** (e.g. `saved`, `applied`).
-- 🎨 **Polished SaaS Dashboard**:
-  - **Dashboard**: Overview KPIs, active research run status, agent health diagnostics, and recent discoveries.
-  - **Discover**: Dynamic skills selector, opportunity types pills, location/experience settings, and live multi-step execution progress.
-  - **Opportunity Results**: Filterable catalog with search, category tabs, remote filters, and instant status updates.
-  - **Saved & Applications**: Kanban/table tracker to advance opportunities from Saved to Applied or Archived.
-  - **Settings**: Preference management, n8n webhook health ping, and safe LLM credential diagnostics.
-- 🛡️ **Zero-Cost Mock Mode**: Includes an intelligent mock research engine for offline development and local evaluation without consuming LLM credits.
-- 🔒 **Security First**: API keys and secrets remain strictly in backend `.env` variables and are never leaked to client bundles.
+- AI-Powered Opportunity Discovery:** Uses Browser Use and Playwright-based browser automation to research websites and find relevant opportunities.
+- Multiple Opportunity Categories:** Supports discovering internships, hackathons, research opportunities, and entry-level jobs.
+- Personalized Search:** Users can configure their skills, interests, preferred locations, and experience level.
+- Automated Workflows:** Integrates with n8n for triggering research workflows, scheduling discovery runs, and setting up email notifications.
+- Opportunity Management:** Save interesting opportunities and track their status as Saved, Applied, or Archived.
+- Search and Filters:** Browse results by category, keywords, and remote-work preferences.
+- Duplicate Detection:** Normalizes URLs and identifies duplicate listings to keep the results organized.
+- Dashboard:** Displays useful statistics, recent discoveries, research progress, and system status.
+- Mock Mode:** Includes a mock research engine for testing and development without using live AI research credits.
+- Backend Security:** Keeps API keys and other secrets in backend environment variables instead of exposing them in frontend code.
 
----
+## Tech Stack
 
-## 🏗️ Architecture
+These are the main technologies used in the project.
 
-```
-React Dashboard (Vite + Tailwind)
-       │
-       ▼
-FastAPI Backend (Pydantic v2 + SQLite)
-       │
-       ▼
-n8n Webhook Trigger (Optional)
-       │
-       ▼
-Browser Use Research Agent (Playwright Chromium)
-       │
-       ▼
-Structured Opportunities (OpportunityListOutput)
-       │
-       ▼
-Deduplication & Storage Engine
-       │
-       ▼
-React Dashboard + Email Notification Digest
-```
+| Technology | Purpose |
+|---|---|
+| React 18 | Building the frontend |
+| Vite | Frontend development and build tooling |
+| Tailwind CSS | Styling the user interface |
+| Python | Backend development |
+| FastAPI | Creating REST APIs |
+| SQLite | Storing opportunities and user preferences |
+| Pydantic | Data validation |
+| Browser Use | AI-assisted browser automation |
+| Playwright | Browser interaction and automation |
+| n8n | Workflow automation |
+| Render | Deployment |
 
----
+## How It Works
 
-## 📁 Project Structure
+The project follows a simple flow:
 
-```
-opp-hunter/
-├── frontend/                     # React 18 + Vite + Tailwind CSS dashboard
-│   ├── src/
-│   │   ├── components/           # Navbar, Sidebar, OpportunityCard
-│   │   ├── pages/                # Dashboard, Discover, Results, Saved, Settings
-│   │   ├── services/             # Axios/Fetch API client
-│   │   ├── App.jsx               # React Router container
-│   │   └── main.jsx
-│   ├── package.json
-│   └── vite.config.js
-│
-├── backend/                      # Python FastAPI backend
-│   ├── app/
-│   │   ├── main.py               # Application entrypoint & CORS
-│   │   ├── api/                  # REST endpoints & webhook receivers
-│   │   ├── models/               # Pydantic schemas (Opportunity, Run, Prefs)
-│   │   ├── database/             # SQLite connection & CRUD queries
-│   │   ├── services/             # URL normalization & deduplication
-│   │   └── agents/               # Browser Use agent & mock engine
-│   ├── tests/                    # Automated unit & integration tests
-│   ├── requirements.txt
-│   └── .env.example
-│
-├── n8n/                          # n8n Orchestration Workflows
-│   ├── workflows/
-│   │   ├── manual_opportunity_discovery.json
-│   │   ├── scheduled_opportunity_discovery.json
-│   │   └── email_notifications.json
-│   └── README.md                 # Import & setup guide
-│
-├── docs/                         # Technical documentation
-│   ├── architecture.md           # System design & algorithms
-│   └── setup-guide.md            # Step-by-step local launch instructions
-│
-├── .gitignore
-└── README.md
-```
+1. The user enters their skills, interests, and search preferences in the dashboard.
+2. The frontend sends the research request to the FastAPI backend.
+3. The backend starts a research run using the configured research engine.
+4. Browser Use can navigate supported opportunity websites and collect relevant information.
+5. The collected data is validated and processed to remove duplicates.
+6. The opportunities are stored in SQLite and displayed on the dashboard.
+7. Users can save opportunities and update their application status.
+
+n8n can be used to trigger research workflows and coordinate scheduled runs and email notifications. A background runner is also available for testing without an active n8n instance.
+
+## What I Learned
+
+Building Opportunity Hunter AI gave me an opportunity to work across both frontend and backend development while exploring AI agents and automation.
+
+Some of the key areas I worked with include:
+
+- Connecting a React frontend to a FastAPI backend.
+- Designing REST APIs and validating structured data.
+- Working with SQLite for persistent storage.
+- Exploring browser automation with Browser Use and Playwright.
+- Integrating n8n workflows with backend services.
+- Handling duplicate records and preserving opportunity statuses.
+- Testing backend functionality and deploying a full-stack application on Render.
+
+This project helped me understand how different technologies can work together to build something more practical than a standalone web application.
+
+## About the Project
+
+Opportunity Hunter AI is a personal project built as part of my journey as a Computer Science student. I'm interested in exploring how AI agents and automation can solve everyday problems, especially when it comes to making career opportunities easier to discover.
+
+Feedback and suggestions are always welcome!
 
 ---
 
-## 🚀 Quick Start (Local Launch)
-
-### 1. Start the FastAPI Backend
-In your first terminal:
-
-```bash
-# Optional: create and activate virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install dependencies
-pip install -r backend/requirements.txt
-
-# Start backend server
-python3 -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-The API will be live at `http://127.0.0.1:8000` with interactive Swagger docs at `http://127.0.0.1:8000/docs`.
-
----
-
-### 2. Start the React Frontend
-In your second terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Open your browser at `http://localhost:5173`.
-
----
-
-### 3. (Optional) Run n8n Workflows
-In a third terminal:
-
-```bash
-npx n8n
-```
-1. Open `http://localhost:5678` in your browser.
-2. Import the workflows from `n8n/workflows/`.
-3. Set `N8N_INTEGRATION_ENABLED=true` in `backend/.env`.
-
----
-
-## 🧪 Running Automated Tests
-
-Run the test suite to verify endpoints, schema validation, URL normalization, and deduplication:
-
-```bash
-python3 -m unittest discover -s backend/tests -p "test_*.py" -v
-```
-
-**Test Coverage Summary:**
-- `test_01_health_check`: Health endpoint verification (`GET /health`).
-- `test_02_workflow_status`: System diagnostics and service status.
-- `test_03_url_normalization`: Stripping tracking tokens, sorting params, lowercase host.
-- `test_04_deduplication_engine`: Duplicate matching while preserving user `APPLIED` status.
-- `test_05_research_request_validation`: Pydantic range checking on request limits.
-- `test_06_trigger_research_mock_mode`: Asynchronous run initiation and run polling.
-- `test_07_n8n_webhook_results_receiver`: Inbound webhook results processing.
-- `test_08_opportunities_crud`: Listing, filtering, updating, and deleting records.
-- `test_09_user_preferences`: Preference read/write persistence.
-- `test_browser_agent`: Schema conformance and mock opportunity generator.
-
----
-
-## 🔌 REST API Reference
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Service health status |
-| `GET` | `/api/workflows/status` | Diagnostics for n8n, Browser Use, and LLM |
-| `GET` | `/api/dashboard/stats` | Aggregated opportunity statistics |
-| `POST` | `/api/research` | Trigger opportunity discovery run |
-| `GET` | `/api/research/{run_id}` | Poll research run status |
-| `POST` | `/api/browser-use/execute`| Direct browser agent execution (called by n8n) |
-| `GET` | `/api/opportunities` | List and filter opportunities |
-| `GET` | `/api/opportunities/{id}` | Get single opportunity |
-| `PATCH` | `/api/opportunities/{id}` | Update opportunity status |
-| `DELETE`| `/api/opportunities/{id}` | Remove opportunity |
-| `GET` | `/api/preferences` | Retrieve user preferences |
-| `PUT` | `/api/preferences` | Update user preferences |
-| `POST` | `/api/webhooks/n8n/results`| Inbound webhook from n8n |
-
----
-
-## 📄 License & Ethical Automation Note
-
-This project is built for educational, portfolio, and personal career development purposes. When running live browser research, always respect target websites' terms of service, robots restrictions, and rate limits. Opportunity Hunter AI does not bypass CAPTCHAs, perform credential stuffing, or submit automated applications.
+Built with curiosity, code, and a lot of learning along the way.
